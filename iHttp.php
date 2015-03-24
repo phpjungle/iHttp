@@ -5,7 +5,7 @@
  * @author PHPJungle
  * @since 2015/03/20 周五
  * @abstract
- * 		待解决问题：1.多级cookie的解析 2.返回结果的解析(取出cookie等)
+ * 		待解决问题：1.多级cookie的解析 2.返回结果的解析(取出cookie等) 3.希望对gets，posts方法添加回调函数支持 :)
  */
 class iHttp{
 	const HTTP_MEHTOD_GET = 1;
