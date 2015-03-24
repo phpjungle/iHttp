@@ -110,7 +110,7 @@ class iHttp{
 	}
 
 	/**
-	 * 批量异步/同步http_get
+	 * 异步多个http_get请求
 	 * 
 	 * @since 2015/03/23 周一
 	 * @param array $urls
@@ -339,7 +339,7 @@ class iHttp{
 	}
 
 	/**
-	 * 同步/异步posts
+	 * 同步/异步(默认)多个http_post请求
 	 *
 	 * @since 2015/03/24 周二
 	 * @param mix $urls
@@ -356,7 +356,7 @@ class iHttp{
 	}
 
 	/**
-	 * asyn_posts[特性:支持回调]
+	 * 异步多个http_post请求
 	 *
 	 * @since 2015/03/24 周二
 	 * @param array $urls
