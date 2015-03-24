@@ -48,3 +48,8 @@ echo $iH->getLastError(); // 打印错误信息
 // 5.2 multi-http_post
 $back = $iH->posts($urls_post,$urls_post_data); // 异步方式：return array
 $back = $iH->posts($urls_post,$urls_post_data,false); // 同步方式：return array
+
+// 6. 笔者在iHttp中添加了静态方法，方便大家查看执行相同任务时同步和异步的性能差别，调用方法：
+$iH::calc_begin();
+//@todo add your codes :)
+$iH::calc_end();
