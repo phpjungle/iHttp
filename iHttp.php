@@ -200,7 +200,7 @@ class iHttp{
 	}
 
 	private function __setRequestURL($url,$forms=array()) {
-		$this->_poststr = is_array($forms)?http_build_query($forms):'';
+		$this->_poststr = is_array($forms)?http_build_query($forms):$forms; // bug fixed:$forms 可能为字符串@2015/03/26 周四
 		$this->_requestUrl = $url;
 
 		$info = parse_url ( $url );
@@ -235,7 +235,6 @@ class iHttp{
 	 */
 	private function __optSets(){
 		$this->__setCookie();
-		var_dump($this->requestHeader);
 		// default:GET
 		$options = array(
 				CURLOPT_HEADER => 0,  // true:显示头信息,false不显示头信息
