@@ -10,6 +10,7 @@
 class iHttp{
 	const HTTP_MEHTOD_GET = 1;
 	const HTTP_MEHTOD_POST = 2;
+	const CONTEYT_TYPE_FORM = 'application/x-www-form-urlencoded; charset=UTF-8'; // Content-Type:
 	
 	public $enableProxy = false;
 	private $_proxyIP = '127.0.0.1';
@@ -217,6 +218,7 @@ class iHttp{
 	}
 	
 	private function __setRequestHeader(){
+		$this->_requestHeader = array(); // init
 		if(is_array($this->requestHeader)){
 			foreach($this->requestHeader as $key=>$val){
 				$this->_requestHeader[] = sprintf('%s: %s',$key,$val);
