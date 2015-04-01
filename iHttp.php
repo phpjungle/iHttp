@@ -374,18 +374,18 @@ class iHttp{
 			return array ();
 
 		$this->method = self::HTTP_MEHTOD_POST;
-
 		$chs = array ();
 		$mh = curl_multi_init (); // init
-		$i = 0; // 优化:可能$urls索引无规律
 		foreach ( $urls as $url ) {
-			$this->__setRequestURL ( $url,$forms[$i] ); // 可能是http+https,必须遍历
+			$form_e = current($forms) AND next($forms);  // BugFixed:可能$urls索引无规律
+			$inner_p = isset($form_e)?$form_e:'';
+			$this->__setRequestURL ( $url, $inner_p); // 可能是http+https,必须遍历
 			$ch = curl_init ( $this->_requestUrl );
 			$chs[] = $ch;
 			curl_setopt_array ( $ch, $this->__optSets () );
 			curl_multi_add_handle ( $mh, $ch ); // add handle
-			$i++;
 		}
+		reset($forms);
 
 		// exec
 		$active = null;
