@@ -206,6 +206,9 @@ class iHttp{
 
 		$info = parse_url ( $url );
 		$scheme = $info ['scheme'];
+		
+		!isset($info['port']) or $this->port = $info['port']; // #bugFixed-20150522:url中可能带有端口号@2015/05/22 周五
+		
 		$this->_isHTTPS = 'https' === $scheme ? true : false;
 
 		// ext-config
