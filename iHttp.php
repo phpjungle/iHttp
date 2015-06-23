@@ -53,12 +53,27 @@ class iHttp{
 	//tick-tock:时间校验[内部使用]
 	private static $time_begin,$time_end;
 	
+	// time_out
+	private $_connect_timeout = 120; // 连接超时时间(s)
+	
 	public function __construct(){
 		$this->__init();
 	}
 
 	private function __init(){
 		$this->userAgent = $this->config['userAgent'];
+	}
+	
+	/**
+	 * The number of seconds to wait while trying to connect. 
+	 * 
+	 * @since 2015/05/18 周一
+	 * @param int $sec
+	 */
+	public function set_connect_timeout($sec = 0){
+		if(is_numeric($sec)){
+			$this->_connect_timeout = $sec;
+		}
 	}
 
 	/**
@@ -252,7 +267,8 @@ class iHttp{
 				CURLOPT_HTTPHEADER =>$this->_requestHeader, // 自定义header信息,格式:字符串数组(e.g.,"Content-type:text/html")
 
 				CURLOPT_HTTPGET => true, // 默认是http_get方式请求
-				CURLOPT_POST => false
+				CURLOPT_POST => false,
+				CURLOPT_CONNECTTIMEOUT => $this->_connect_timeout //The number of seconds to wait while trying to connect. Use 0 to wait indefinitely.
 		);
 
 		// if:POST
