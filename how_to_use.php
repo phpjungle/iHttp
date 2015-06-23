@@ -53,3 +53,7 @@ $back = $iH->posts($urls_post,$urls_post_data,false); // 同步方式：return a
 $iH::calc_begin();
 //@todo add your codes :)
 $iH::calc_end();
+
+// 7. 设置连接超时时间（set_connect_timeout）
+$iH->set_connect_timeout(10); // set_connect_timeout to 10secs
+
