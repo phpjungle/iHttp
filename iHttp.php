@@ -5,7 +5,7 @@
  * @author PHPJungle
  * @since 2015/03/20 周五
  * @abstract
- * 		待解决问题：1.多级cookie的解析 2.返回结果的解析(取出cookie等) 3.希望对gets，posts方法添加回调函数支持 :)
+ * 	1.希望对gets，posts方法添加回调函数支持 :)
  */
 class iHttp{
 	const HTTP_MEHTOD_GET = 1;
@@ -41,8 +41,10 @@ class iHttp{
 	private $_requestUrl = '';
 	private $_isHTTPS = false;
 
-	public $res_headerstr = '';		// response header string
-	public $res_header_ar = array();// response header array
+	public $res_headerstr = '';	// response header string
+	public $res_ar_header = array();// response header array
+	public $res_cookie = ''; // response cookie string 
+	public $res_ar_cookie ='';// response cookie array 
 	public $results = array();
 	public $httpCode = ''; // response响应代码
 
@@ -55,6 +57,9 @@ class iHttp{
 	
 	// time_out
 	private $_connect_timeout = 120; // 连接超时时间(s)
+	
+	// show header info or not 
+	private $_return_header = false;
 	
 	public function __construct(){
 		$this->__init();
@@ -88,9 +93,25 @@ class iHttp{
 		$this->method = self::HTTP_MEHTOD_GET; // 不能直接用于set_opt_array
 		$this->__setRequestURL($url);
 
+		$this->_return_header = true; # set true to return the response header after curl_exec;(add@15.06.28 周日)
+
 		$ch = curl_init ( $this->_requestUrl );
 		curl_setopt_array ( $ch, $this->__optSets () );
 		$response = curl_exec($ch); // CURLOPT_RETURNTRANSFER设置为true时,
+	
+		$body = false;
+		// get header and body(add@15.06.28 周日)
+		if(false !== $response){
+			$ar_back= explode(PHP_EOL.PHP_EOL, $response,2);
+			if($ar_back){
+				$this->res_headerstr = $ar_back['0'];
+				$body = $ar_back['1'];
+				
+				# parse response header infos(eg.cookie etc)
+				$this->parse_response_header($this->res_headerstr);
+			}
+		}
+	
 		// ERROR CHECK:
 		{
 			$this->_error = curl_error($ch); // 如果没错误就是空字符串
@@ -102,7 +123,7 @@ class iHttp{
 			$this->__summaryResponse($response);
 		}
 		curl_close ( $ch );
-		return $response;
+		return $body;
 	}
 
 	/**
@@ -176,10 +197,6 @@ class iHttp{
 	private function __summaryResponse($response){
 		if(false === $response)
 			return false;
-
-		// 		$tmp = strstr('\r\n', $response);
-		// 		var_dump($tmp);
-		// 		var_dump(strstr('\r', $response));
 	}
 
 	/**
@@ -257,7 +274,7 @@ class iHttp{
 		$this->__setCookie();
 		// default:GET
 		$options = array(
-				CURLOPT_HEADER => 0,  // true:显示头信息,false不显示头信息
+				CURLOPT_HEADER => $this->_return_header,  // true:显示头信息,false不显示头信息
 				CURLOPT_RETURNTRANSFER => true,// 如果成功只将结果返回，不自动输出任何内容。
 				CURLOPT_PORT => $this->port, // An alternative port number to connect to.
 				CURLOPT_REFERER => $this->reffer, // hearder:referer
@@ -341,9 +358,24 @@ class iHttp{
 		$this->method = self::HTTP_MEHTOD_POST;
 		$this->__setRequestURL($url,$forms);
 
+		$this->_return_header = true; # set true to return the response header after curl_exec;(add@15.06.28 周日)
+
 		$ch = curl_init ( $this->_requestUrl );
 		curl_setopt_array ( $ch, $this->__optSets () );
 		$response = curl_exec($ch); // CURLOPT_RETURNTRANSFER设置为true时,
+	
+		$body = false;
+		// get header and body
+		if(false !== $response){
+			$ar_back= explode(PHP_EOL.PHP_EOL, $response,2);
+			if($ar_back){
+				$this->res_headerstr = $ar_back['0'];
+				$body = $ar_back['1'];
+		
+				$this->parse_response_header($this->res_headerstr);
+			}
+		}
+	
 		// ERROR CHECK:
 		{
 			$this->_error = curl_error($ch); // 如果没错误就是空字符串
@@ -355,7 +387,7 @@ class iHttp{
 			$this->__summaryResponse($response);
 		}
 		curl_close ( $ch );
-		return $response;
+		return $body;
 	}
 
 	/**
@@ -434,5 +466,54 @@ class iHttp{
 		$tpl ='<div style="font-family:consolas;border:2px solid #eee;padding:5px;">It cost %s s</div>';
 		$timespam =  self::$time_end-self::$time_begin;
 		echo sprintf($tpl,$timespam);
+	}
+	
+	/**
+	 * parse response cookie
+	 * 
+	 * @since 15.06.27 周六
+	 * @param string $headerstr
+	 * @return void 
+	 */
+	private function parse_response_cookie(){
+		$ar_header = $this->res_ar_header;
+		if($ar_header){
+			$pattern = '/Set-Cookie: (.*?)=(.*?);/'; # Set-Cookie: ASP.NET_SessionId=oszgh4r5yrbjxudfedythelj;
+			foreach ($ar_header as $line){
+				if(0 === strpos($line, 'Set-Cookie: ')){
+					$num= preg_match_all($pattern, $line, $matches);
+					if($matches['1'] AND $matches['2']){
+						$this->res_ar_cookie[$matches['1']['0']] = $matches['2']['0'];
+					}
+				}
+			}
+			if($this->res_ar_cookie){
+				$cks = array();
+				foreach($this->res_ar_cookie as $k=>$v){
+					$cks[] = sprintf('%s=%s',$k,$v);
+				}
+				$this->res_cookie = implode ( '; ', $cks );
+			}
+		}
+	}
+	
+	/**
+	 * parse response header
+	 *
+	 * @since 15.06.27 周六
+	 * @param string $headerstr
+	 * @return void
+	 */
+	private function parse_response_header($headerstr){
+		if(empty($headerstr))
+			return ;
+		
+		$ar_header = explode ( PHP_EOL, $headerstr );
+		if($ar_header){
+			$this->res_ar_header = $ar_header;
+			$this->parse_response_cookie();
+		}
+		
+		return ;
 	}
 }
