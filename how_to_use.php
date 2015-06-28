@@ -61,7 +61,7 @@ $iH->set_connect_timeout(10); // set_connect_timeout to 10secs
 $iH->res_cookie; #　Cookie-string-format
 $iH->res_ar_cookie;# Cookie-array-format
 
-$iH->res_ar_header;# Header-string-format
-$iH->res_headerstr;# Header-array-format
+$iH->res_ar_header;# Header-array-format
+$iH->res_headerstr;# Header-string-format
 
 
