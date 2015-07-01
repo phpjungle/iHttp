@@ -46,4 +46,5 @@ echo 'response body:',$html,PHP_EOL,'<br/>';
 echo '<hr>';
 echo 'error msg:',$errormsg,PHP_EOL,'<br/>';
 
+# Time costs:
 iHttp::calc_end();
