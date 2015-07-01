@@ -215,7 +215,7 @@ class iHttp{
 		$ar_cookie_raw = empty($this->cookie)?array():explode ( ';', $this->cookie ); // 返回array('a=b','c=d') or array()
 		$ar_cookie = array();
 		foreach($ar_cookie_raw as $link){
-			$kv = explode ( '=', $link );
+			$kv = explode ( '=', $link,2);#budFixed-20150702-修复了多级cookie解析过程中导致cookie缺失的问题@15.07.02 周四byiPHPJungle
 			if(isset($kv['1'])){ // illega?yes
 				$ar_cookie[trim($kv['0'])] = $kv['1'];
 			}
