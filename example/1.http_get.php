@@ -47,7 +47,7 @@ echo '<hr>';
 echo 'error msg:',$errormsg,PHP_EOL,'<br/>';
 
 # Time costs:
-iHttp::calc_end(fewfew);
+iHttp::calc_end();
 
 # Raw HTTP POST Request
 
