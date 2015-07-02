@@ -47,4 +47,15 @@ echo '<hr>';
 echo 'error msg:',$errormsg,PHP_EOL,'<br/>';
 
 # Time costs:
-iHttp::calc_end();
+iHttp::calc_end(fewfew);
+
+# Raw HTTP POST Request
+
+// GET https://www.google.com/ HTTP/1.1
+// User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36
+// Host: www.google.com
+// Accept: */*
+// Accept-Encoding: deflate, gzip
+// Referer:
+// Cookie:
+
