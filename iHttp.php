@@ -62,6 +62,9 @@ class iHttp{
 	private $_return_header = false;
 	
 	public function __construct(){
+		# check extension:curl
+		extension_loaded('curl') or die('Fatal Error:curl extension is  not loaded!!');
+		
 		$this->__init();
 	}
 
